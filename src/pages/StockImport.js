@@ -162,8 +162,8 @@ const StockImport = () => {
                                     <tbody>
                                         {products.map(product => (
                                             <tr key={product.id}>
-                                                <td>{product.name}</td>
-                                                <td>{product.description}</td>
+                                                <td style={{ maxWidth: "200px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{product.name}</td>
+                                                <td style={{ maxWidth: "200px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{product.description}</td>
                                                 <td>{product.price}</td>
                                                 <td>{product.category.name}</td>
                                                 <td>{product.stock}</td>
