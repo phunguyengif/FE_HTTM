@@ -26,11 +26,15 @@ import OrderStatus from "./pages/OrderStatus";
 import RevenueAnalytics from "./pages/RevenueAnalytics";
 import ForgotPassword from "./pages/ForgotPassword";
 import Profile from "./pages/Profile";
+import DanhGia from "./pages/Đánh giá";
+import FormDanhGia from "./pages/FormDanhGia";
+import RevenueCharts from "./components/RevenueCharts";
+
 function AppContent() {
   const location = useLocation();
 
   // Danh sách các đường dẫn cần ẩn Header/Footer
-  const hideHeaderPaths = ["/Admin", "/CartList", "/UserList", "/DiscountList", "/StockImport", "/OrderStatus", "/RevenueAnalytics"];
+  const hideHeaderPaths = ["/Admin", "/CartList", "/UserList", "/DiscountList", "/StockImport", "/OrderStatus", "/RevenueAnalytics","/login", "/register","/forgot-password"];
 
   return (
     <>
@@ -51,9 +55,13 @@ function AppContent() {
           <Route path="/Cart" element={<Cart />} />
           <Route path="/OrderHistory" element={<OrderHistory />} />
           <Route path="/CartBill" element={<CartBill />} />
-          <Route path="/ProductSearch" element={<ProductSearch />} />s
+          <Route path="/DanhGia" element={<DanhGia />} />
+          <Route path="/FormDanhGia" element={<FormDanhGia />} />
+          <Route path="/ProductSearch" element={<ProductSearch />} />
           <Route path="/ShowProduct" element={<ShowProduct />} />
+          <Route path="/RevenueCharts" element={<RevenueCharts />} />
           <Route path="/Product/:id" element={<ProductDetail />} />
+          <Route path="/FormDanhGia/:id" element={<FormDanhGia />} />
 
           {/* Trang dành riêng cho ADMIN */}
           <Route
@@ -105,7 +113,7 @@ function AppContent() {
             }
           />
           <Route
-            path="RevenueAnalytics"
+            path="/RevenueAnalytics"
             element={
               <ProtectedRoute adminOnly={true}>
                 <RevenueAnalytics />

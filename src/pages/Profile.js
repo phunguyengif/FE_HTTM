@@ -17,7 +17,7 @@ const Profile = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Thêm token ở đây
+            Authorization: `Bearer ${token}`, 
           },
         });
 
@@ -43,7 +43,7 @@ const Profile = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(profile), // Gửi dữ liệu người dùng
+        body: JSON.stringify(profile), 
       });
 
       if (!response.ok) {
@@ -51,7 +51,7 @@ const Profile = () => {
       }
 
       const message = await response.text();
-      alert(message); // Hiển thị thông báo "Update successfully"
+      alert(message); 
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Cập nhật thất bại. Vui lòng thử lại.");
@@ -72,7 +72,7 @@ const Profile = () => {
               <label className="form-label">Tên đăng nhập</label>
               <input
                 type="text"
-                value={profile.role}
+                value={profile.fullname}
                 readOnly
                 className="form-input readonly"
               />

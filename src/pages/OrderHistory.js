@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const OrderHistory = () => {
   const [orderHistory, setOrderHistory] = useState([]);
@@ -8,6 +9,7 @@ const OrderHistory = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrderHistory = async () => {
@@ -40,6 +42,7 @@ const OrderHistory = () => {
       });
 
       setSelectedOrderDetails(response.data);
+      console.log(response)
       setIsModalOpen(true);
     } catch (err) {
       setError("Không thể tải chi tiết đơn hàng. Vui lòng thử lại sau!");
@@ -49,6 +52,10 @@ const OrderHistory = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedOrderDetails(null);
+  };
+  const handleDanhGiaClick = (productId) => {
+    console.log(productId)
+    navigate(`/FormDanhGia/${productId}`); // ✅ Chuyển sang form đánh giá
   };
 
   const filterOrders = () =>
@@ -101,16 +108,8 @@ const OrderHistory = () => {
                   <div className="order-status">
                     <span>{statusMap[order.status]}</span>
                   </div>
-                  <div className="order-info">
-                    {/* Hiển thị ảnh sản phẩm
-                    <div className="product-image">
-                      <img
-                        src={`http://localhost:8080/${order.products.imageUrl}`}
-                        alt="Product"
-                        style={{ width: "100px", height: "100px", objectFit: "cover" }}
-                      />
-                    </div> */}
 
+                  <div className="order-info">
                     {/* Thông tin đơn hàng */}
                     <div className="order-details">
                       <p>
@@ -124,6 +123,23 @@ const OrderHistory = () => {
                       </p>
                     </div>
                   </div>
+
+                  {/* ✅ Nút đánh giá nằm bên trong li */}
+                  {order.status === "COMPLETED" && (
+                    <div className="d-flex align-items-end justify-content-end" style={{ height: "100%" }}>
+                      <button
+                        type="button"
+                        className="btn btn-sm text-white"
+                        style={{ backgroundColor: "#ca5738ff" }}
+                        onClick={(e) => {
+                          e.stopPropagation(); // tránh trigger fetchOrderDetails
+                          handleDanhGiaClick(Object.keys(order.products ?? {})[0]);
+                        }}
+                      >
+                        Đánh giá
+                      </button>
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
@@ -131,6 +147,7 @@ const OrderHistory = () => {
             <p>Không có đơn hàng nào ở trạng thái này.</p>
           )}
         </div>
+
       </div>
 
       {isModalOpen && selectedOrderDetails && (

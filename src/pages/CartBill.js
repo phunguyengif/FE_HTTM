@@ -54,41 +54,44 @@ const CartBill = () => {
     };
 
     const handlePlaceOrder = async () => {
-        setPlacingOrder(true); // Bắt đầu xử lý
-    
+        setPlacingOrder(true);
+
         try {
-            // Lấy mảng id của sản phẩm trong giỏ hàng
-            const cartItemIds = cartItems.map(item => item.id);
-    
-            // Tạo đối tượng dữ liệu cần gửi
+            const items = cartItems.map(item => ({
+                cartItemId: item.id,
+                quantity: item.quantity
+            }));
+
             const orderData = {
-                discountCode: selectedDiscount, // Mã giảm giá đã chọn
-                cartItemIds: cartItemIds // Mảng id sản phẩm
+                discountCode: selectedDiscount || "",
+                items: items
             };
-            // Gửi yêu cầu POST dưới dạng JSON
+
             const response = await fetch("http://localhost:8080/api/order/place", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json", // Xác định là gửi dữ liệu JSON
+                    "Content-Type": "application/json",
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
-                body: JSON.stringify(orderData), // Chuyển đối tượng thành JSON
+                body: JSON.stringify(orderData)
             });
-    
+
             if (!response.ok) {
                 throw new Error("Lỗi khi đặt hàng. Vui lòng thử lại.");
             }
-    
+
             const data = await response.json();
             alert("Đơn hàng đã được đặt thành công!");
-            navigate("/Cart", { state: { order: data } }); // Điều hướng đến trang xác nhận đơn hàng
+            navigate("/Cart", { state: { order: data } });
+
         } catch (err) {
             alert(err.message || "Đã xảy ra lỗi. Vui lòng thử lại.");
         } finally {
-            setPlacingOrder(false); // Kết thúc xử lý
+            setPlacingOrder(false);
         }
     };
-    
+
+
 
 
     if (loading) {
@@ -124,7 +127,17 @@ const CartBill = () => {
                                 cartItems.map((item) => (
                                     <tr key={item.product.id} className="product-item">
                                         <td className="product-info">
-                                            <img src={`http://localhost:8080/${item.product.imageUrl}`} alt={item.product.name} className="product-image" />
+                                            <img
+                                                src={
+                                                    item.product.imageUrl
+                                                        ? item.product.imageUrl.split(";")[0].startsWith("http")
+                                                            ? item.product.imageUrl.split(";")[0]
+                                                            : `http://localhost:8080/${item.product.imageUrl.split(";")[0]}`
+                                                        : ""
+                                                }
+                                                alt={item.product.name}
+                                                width="50"
+                                            />
                                             <span className="product-name">{item.product.name}</span>
                                         </td>
                                         <td>{item.quantity}</td>

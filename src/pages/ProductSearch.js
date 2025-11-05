@@ -1,7 +1,7 @@
 // src/ProductSearch.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ProductItem from '../components/Product';
+import ProductItem from '../components/ProductItem';
 
 const ProductSearch = () => {
     const [results, setResults] = useState([]);

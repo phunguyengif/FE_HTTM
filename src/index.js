@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import ReactDOM from "react-dom/client"; // ✅ Import đúng cho React 18
+import ReactDOM from "react-dom/client"; // Import đúng cho React 18
 import "./index.css";
 import App from "./App";
 
@@ -117,7 +117,7 @@ export function SliderController({ intervalTime = 3000, maxSlides = 4 }) {
     };
   }, [handleLeftClick, handleRightClick]);
 
-  return null; // Không render gì vì HTML đã có sẵn
+  return null; 
 }
 const root = ReactDOM.createRoot(document.getElementById("root"));
 

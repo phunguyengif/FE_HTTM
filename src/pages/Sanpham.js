@@ -6,36 +6,75 @@ const Sanpham = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    // State cho các bộ lọc
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const [selectedPriceRange, setSelectedPriceRange] = useState('');
+    const [minPriceInput, setMinPriceInput] = useState('');
+    const [maxPriceInput, setMaxPriceInput] = useState('');
+    const [selectedColor, setSelectedColor] = useState(null);
+    const [selectedGender, setSelectedGender] = useState(null);
+
+    // State mới cho Danh mục được tải từ API
+    const [apiCategories, setApiCategories] = useState([]); 
+    const [categoryLoading, setCategoryLoading] = useState(true); // State loading mới cho danh mục
+
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
 
     const pageSize = 10;
-    const categories = [
-        { id: 1, name: 'Dior' },
-        { id: 2, name: 'Gucci' },
-        { id: 3, name: 'Cartier' },
+
+    // Dữ liệu mẫu CỐ ĐỊNH 
+    const colors = [
+        { name: 'Đen', value: 'Black' },
+        { name: 'Trắng', value: 'White' },
+        { name: 'Đỏ', value: 'Red' },
+        { name: 'Xanh dương', value: 'Blue' },
     ];
-    const priceRanges = [
-        { label: 'Tất cả', min: null, max: null },
-        { label: 'Dưới 100k', min: 0, max: 100000 },
-        { label: '100k - 500k', min: 100000, max: 500000 },
-        { label: 'Trên 500k', min: 500000, max: null },
+    const genders = [
+        { name: 'Nam', value: 'Nam' },
+        { name: 'Nữ', value: 'Nữ' },
+        { name: 'Unisex', value: 'Unisex' },
     ];
 
-    const fetchProducts = async (pageNumber, category = null, priceRange = null, reset = false) => {
+    // --- Hàm Fetch Categories ---
+    const fetchCategories = async () => {
+        setCategoryLoading(true);
+        try {
+            const response = await fetch('http://localhost:8080/api/categories');
+            if (!response.ok) {
+                throw new Error('Không thể tải danh mục');
+            }
+            const data = await response.json();
+            setApiCategories(data);
+        } catch (err) {
+            console.error('Lỗi tải danh mục:', err);
+            // Có thể hiển thị lỗi nhỏ nếu cần, nhưng không chặn trang chính
+        } finally {
+            setCategoryLoading(false);
+        }
+    };
+
+    // --- Gọi API Categories khi component mount ---
+    useEffect(() => {
+        fetchCategories();
+    }, []); 
+
+    // --- Hàm Fetch Products (Giữ nguyên) ---
+    const fetchProducts = async (pageNumber, category = null, color = null, gender = null, minP = null, maxP = null, reset = false) => {
         setLoading(true);
         setError(null);
-
+        // ... (Logic fetch Products giữ nguyên) ...
         try {
             const categoryFilter = category ? `&categoryId=${category}` : '';
+            const colorFilter = color ? `&color=${color}` : '';
+            const genderFilter = gender ? `&genderTarget=${gender}` : '';
+
             const priceFilter =
-                priceRange && priceRange.min !== null
-                    ? `&minPrice=${priceRange.min}${priceRange.max !== null ? `&maxPrice=${priceRange.max}` : ''}`
-                    : '';
+                `${minP !== null && minP !== '' ? `&minPrice=${minP}` : ''}` +
+                `${maxP !== null && maxP !== '' ? `&maxPrice=${maxP}` : ''}`;
+
             const response = await fetch(
-                `http://localhost:8080/api/products/filter?page=${pageNumber}&size=${pageSize}${categoryFilter}${priceFilter}`
+                `http://localhost:8080/api/products/filter?page=${pageNumber}&size=${pageSize}${categoryFilter}${priceFilter}${colorFilter}${genderFilter}`
             );
 
             if (!response.ok) {
@@ -60,83 +99,190 @@ const Sanpham = () => {
         }
     };
 
+    // --- useEffect: Kích hoạt lại API khi bộ lọc thay đổi (Giữ nguyên) ---
     useEffect(() => {
-        fetchProducts(0, selectedCategory, selectedPriceRange ? JSON.parse(selectedPriceRange) : null, true);
-    }, [selectedCategory, selectedPriceRange]);
+        fetchProducts(
+            0,
+            selectedCategory,
+            selectedColor,
+            selectedGender,
+            minPriceInput,
+            maxPriceInput,
+            true
+        );
+    }, [selectedCategory, selectedColor, selectedGender, minPriceInput, maxPriceInput]);
 
+    // --- Các Hàm Xử lý Thay đổi Bộ lọc (Giữ nguyên) ---
     const handleCategoryChange = (categoryId) => {
         setSelectedCategory(categoryId);
         setPage(0);
     };
 
-    const handlePriceRangeChange = (event) => {
-        setSelectedPriceRange(event.target.value);
+    const handleMinPriceChange = (event) => {
+        setMinPriceInput(event.target.value);
+        setPage(0);
+    };
+
+    const handleMaxPriceChange = (event) => {
+        setMaxPriceInput(event.target.value);
+        setPage(0);
+    };
+
+    const handleColorChange = (colorValue) => {
+        setSelectedColor(colorValue);
+        setPage(0);
+    };
+
+    const handleGenderChange = (genderValue) => {
+        setSelectedGender(genderValue);
         setPage(0);
     };
 
     const handleShowAllProducts = () => {
         setSelectedCategory(null);
-        setSelectedPriceRange('');
+        setMinPriceInput('');
+        setMaxPriceInput('');
+        setSelectedColor(null);
+        setSelectedGender(null);
         setPage(0);
     };
 
     const loadMoreProducts = () => {
         const nextPage = page + 1;
         setPage(nextPage);
-        fetchProducts(nextPage, selectedCategory, selectedPriceRange ? JSON.parse(selectedPriceRange) : null);
+        fetchProducts(
+            nextPage,
+            selectedCategory,
+            selectedColor,
+            selectedGender,
+            minPriceInput,
+            maxPriceInput
+        );
     };
 
     if (error) {
         return <p>Có lỗi xảy ra khi lấy dữ liệu: {error.message}</p>;
     }
 
+    // Kiểm tra xem có bộ lọc nào đang được chọn không
+    const isFilterApplied = selectedCategory !== null || minPriceInput !== '' || maxPriceInput !== '' || selectedColor !== null || selectedGender !== null;
+
+    // --- Giao diện (JSX) Cập Nhật ---
     return (
-        <div className="containerr">
-            <div className="Product-cartergory">
-                <h2>Tất cả sản phẩm</h2>
-                <div className="product-button">
-                    <button
-                        className={`btn btn-outline-secondary ${selectedCategory === null ? 'active' : ''}`}
-                        onClick={handleShowAllProducts}
-                    >
-                        Hiển Thị Tất Cả
-                    </button>
-                    {categories.map((category) => (
+        <div className="containerr product-page-layout">
+
+            <aside className="filter-sidebar">
+                <h3 className="sidebar-headings mb-3">Bộ lọc tìm kiếm</h3>
+
+                {/* Lọc theo Danh mục --- */}
+                <p className="sidebar-heading">Danh mục</p>
+                <div className="category-list mb-4">
+                    {categoryLoading ? (
+                        <p>Đang tải danh mục...</p>
+                    ) : (
+                        apiCategories.map((category) => ( 
+                            <button
+                                key={category.id}
+                                className={`filter-btn ${selectedCategory === category.id ? 'active' : ''}`}
+                                onClick={() => handleCategoryChange(category.id)}
+                            >
+                                {category.name}
+                            </button>
+                        ))
+                    )}
+                </div>
+
+                <hr className="divider" />
+
+                {/* Lọc theo Khoảng giá --- */}
+                <p className="sidebar-heading">Lọc theo giá (VNĐ)</p>
+                <div className="price-input-filter mb-4">
+                    <input
+                        type="number"
+                        placeholder="Tối thiểu"
+                        value={minPriceInput}
+                        onChange={handleMinPriceChange}
+                        className="form-control price-input"
+                        min="0"
+                    />
+                    <div className="price-divider">~</div>
+                    <input
+                        type="number"
+                        placeholder="Tối đa"
+                        value={maxPriceInput}
+                        onChange={handleMaxPriceChange}
+                        className="form-control price-input"
+                        min="0"
+                    />
+                </div>
+
+                <hr className="divider" />
+
+                {/* Lọc theo Giới tính --- */}
+                <p className="sidebar-heading">Giới tính</p>
+                <div className="gender-filter mb-4">
+                    {genders.map((gender) => (
                         <button
-                            key={category.id}
-                            className={`btn btn-outline-secondary ${selectedCategory === category.id ? 'active' : ''}`}
-                            onClick={() => handleCategoryChange(category.id)}
+                            key={gender.value}
+                            className={`filter-btn ${selectedGender === gender.value ? 'active' : ''}`}
+                            onClick={() => handleGenderChange(gender.value)}
                         >
-                            {category.name}
+                            {gender.name}
                         </button>
                     ))}
                 </div>
-                <div className="price-filter">
-                    <select
-                        value={selectedPriceRange}
-                        onChange={handlePriceRangeChange}
-                        className="form-select"
-                    >
-                        {priceRanges.map((range, index) => (
-                            <option key={index} value={JSON.stringify(range)}>
-                                {range.label}
-                            </option>
-                        ))}
-                    </select>
+
+                <hr className="divider" />
+
+                {/* Lọc theo Màu sắc --- */}
+                <p className="sidebar-heading">Màu sắc</p>
+                <div className="color-filter d-flex flex-wrap gap-2 mb-4">
+                    {colors.map((color) => (
+                        <button
+                            key={color.value}
+                            className={`color-swatch ${selectedColor === color.value ? 'selected' : ''}`}
+                            style={{ backgroundColor: color.value, borderColor: color.value }}
+                            title={color.name}
+                            onClick={() => handleColorChange(color.value)}
+                        >
+                            {selectedColor === color.value && <span className="check-mark">✓</span>}
+                        </button>
+                    ))}
+                    {selectedColor && (
+                        <button className="btn btn-sm btn-link" onClick={() => handleColorChange(null)}>
+                            (Bỏ chọn)
+                        </button>
+                    )}
                 </div>
-            </div>
-            <ProductList products={products} />
-            {hasMore && (
-                <div className="load-more-container">
+                {/*  Nút Reset (Đặt ở vị trí dễ thấy) --- */}
+                {isFilterApplied && (
                     <button
-                        className="btn btn-primary load-more-button"
-                        onClick={loadMoreProducts}
-                        disabled={loading}
+                        className="btn btn-secondary mb-3 w-100"
+                        onClick={handleShowAllProducts}
                     >
-                        {loading ? 'Đang tải...' : 'Tải thêm'}
+                        Bỏ Tất Cả Bộ Lọc
                     </button>
-                </div>
-            )}
+                )}
+
+            </aside>
+
+            {/* 2. MAIN CONTENT - Khu vực hiển thị sản phẩm */}
+            <main className="product-main-content">
+                <h2>Tất cả sản phẩm</h2>
+                <ProductList products={products} />
+
+                {hasMore && (
+                    <div className="load-more-container">
+                        <button
+                            className="btn btn-primary load-more-button"
+                            onClick={loadMoreProducts}
+                            disabled={loading}
+                        >
+                            {loading ? 'Đang tải...' : 'Tải thêm'}
+                        </button>
+                    </div>
+                )}
+            </main>
         </div>
     );
 };

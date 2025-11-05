@@ -28,7 +28,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 
         const role = response.data.role; // Lấy role từ API
 
-        if (adminOnly && role !== 'ADMIN') {
+        if (adminOnly && role !== 2) {
           // Nếu trang chỉ dành cho ADMIN mà người dùng không phải ADMIN
           setIsAuthorized(false);
         } else {

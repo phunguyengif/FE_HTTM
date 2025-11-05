@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ProductItem from './Product';
+import ProductItem from './ProductItem';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
@@ -11,15 +11,15 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/products/getAll');
+        const response = await fetch('http://localhost:8080/api/products/getAll?page=0&size=8');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
+
         const data = await response.json();
 
-        // Truy cập vào thuộc tính content để lấy mảng sản phẩm
         if (Array.isArray(data.content)) {
-          setProducts(data.content.slice(0, 8));
+          setProducts(data.content);
         } else {
           throw new Error('Dữ liệu không phải là một mảng');
         }

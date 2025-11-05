@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ProductItemCart from "../components/ProductItemCart";
+import DanhGia from "./Đánh giá";
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -109,6 +110,7 @@ const Cart = () => {
                     <h4 style={{ fontWeight: "bold" }}>Giỏ hàng của bạn</h4>
                     <a href="/Sanpham">Tiếp tục mua sắm</a>
                     <a href="/OrderHistory">Lịch sử mua hàng</a>
+                    <a href="/DanhGia">Đánh giá</a>
                 </div>
                 {/* Checkbox "Chọn tất cả" */}
                 <div className="select-all-container">

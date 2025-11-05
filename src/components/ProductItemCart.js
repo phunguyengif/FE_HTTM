@@ -7,15 +7,25 @@ const ProductItemCart = ({ imageUrl, name, price, onClick, onRemove, quantity, o
     };
     return (
         <div className="product-buy-1-content-product-item">
+
             <div className="select-product">
                 <input
                     type="checkbox"
                     checked={isSelected}
-                    onChange={onSelect} // Gọi hàm chọn sản phẩm khi tick
+                    onChange={onSelect}
                 />
             </div>
             <div onClick={onClick}>
-                <img src={`http://localhost:8080/${imageUrl}`} alt="#" />
+                <img
+                    src={
+                        imageUrl
+                            ? imageUrl.split(";")[0].startsWith("http")
+                                ? imageUrl.split(";")[0]
+                                : `http://localhost:8080/${imageUrl.split(";")[0]}`
+                            : ""
+                    }
+                    alt={name}
+                />
                 <div className="product-cart-1-content-product-item-text">
                     <li>{name}</li>
                     <li>Số lượng: {quantity}</li>
@@ -24,7 +34,7 @@ const ProductItemCart = ({ imageUrl, name, price, onClick, onRemove, quantity, o
             </div>
             <div className="remove-product">
                 <button
-                    className="btn btn-primary" onClick={onRemove}>
+                    className="btn " onClick={onRemove}>
                     <i className="fa-solid fa-trash"></i>
                 </button>
             </div>

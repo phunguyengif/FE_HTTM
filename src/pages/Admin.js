@@ -1,12 +1,23 @@
-import React from "react";
 import MenuBar from "../components/MenuBar";
 import TotalProducts from "../components/TotalProducts";
 import TotalDiscounts from "../components/TotalDiscounts";
 import RevenuesComponent from "../components/RevenuesComponent";
 import TotalOrders from "../components/TotalOrders";
+import { useNavigate } from "react-router-dom";
+import Profile from "./Profile";
+import RevenueCharts from "../components/RevenueCharts";
 
 const Admin = () => {
+  const navigate = useNavigate();
 
+  const handleLogout = () => {
+    // Xóa dữ liệu đăng nhập
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+
+    // Chuyển đến trang đăng nhập
+    navigate("/login");
+  }
 
   return (
     <div>
@@ -14,32 +25,63 @@ const Admin = () => {
       <article>
         <div class="container-fluid py-2">
           <div class="row">
-            <div class="ms-3">
-              <h3 class="mb-0 h4 font-weight-bolder">Dashboard</h3>
-              <p class="mb-4">
-                Check the sales, value and bounce rate by country.
-              </p>
-            </div>
-            <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-              <div class="card">
-                <div class="card-header p-2 ps-3">
-                  <div class="d-flex justify-content-between">
-                    <div>
-                      <p class="text-sm mb-0 text-capitalize">Today's Money</p>
-                      <h4 class="mb-0">< RevenuesComponent /></h4>
-                    </div>
-                    <div >
-                      <i style={{ fontSize: "30px" }} class="fa-solid fa-calendar-week"></i>
-                    </div>
-                  </div>
+
+            <div class="d-flex align-items-center justify-content-between ms-3 mb-4">
+              <div className="d-flex align-items-center mb-3">
+                <h3 className="h4 font-weight mb-0 me-3">Dashboard</h3>
+
+                <div className="position-relative">
+                  <input
+                    type="text"
+                    className="form-control shadow-sm"
+                    placeholder="Search..."
+                    style={{
+                      borderRadius: "30px",
+                      paddingRight: "40px",
+                      backgroundColor: "#f8f9fa",
+                      width: "220px",
+                      transition: "width 0.3s ease",
+                      cursor: "text",
+                    }}
+                  />
+                  <i
+                    className="fa fa-search position-absolute"
+                    style={{
+                      right: "15px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      color: "gray",
+                      pointerEvents: "none",
+                      cursor: "pointer",
+                    }}
+                  ></i>
                 </div>
-                <div class="horizontal-line"></div>
-                <div class="card-footer p-2 ps-3">
-                  <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+55% </span>than last week</p>
+              </div>
+
+
+
+              <div class="nav-item dropdown">
+                <a
+                  class="nav-link p-0 border-0 bg-transparent"
+                  href="#"
+                  data-bs-toggle="dropdown"
+                >
+                  <img
+                    src="https://i.pravatar.cc/40"
+                    class="avatar img-fluid rounded-circle"
+                    alt="User"
+                  />
+                </a>
+
+                <div class="dropdown-menu dropdown-menu-end shadow">
+                  <a class="dropdown-item" href="/Profile">Profile</a>
+                  <a class="dropdown-item" href="#">Settings</a>
+                  <div class="dropdown-divider"></div>
+                  <button class="dropdown-item" onClick={handleLogout}>Log out</button>
                 </div>
               </div>
             </div>
-            <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="col-xl-4 col-sm-6 mb-5">
               <div class="card">
                 <div class="card-header p-2 ps-3">
                   <div class="d-flex justify-content-between">
@@ -54,12 +96,9 @@ const Admin = () => {
                   </div>
                 </div>
                 <div class="horizontal-line"></div>
-                <div class="card-footer p-2 ps-3">
-                  <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+3% </span>than last month</p>
-                </div>
               </div>
             </div>
-            <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="col-xl-4 col-sm-6 mb-5">
               <div class="card">
                 <div class="card-header p-2 ps-3">
                   <div class="d-flex justify-content-between">
@@ -73,12 +112,9 @@ const Admin = () => {
                   </div>
                 </div>
                 <div class="horizontal-line"></div>
-                <div class="card-footer p-2 ps-3">
-                  <p class="mb-0 text-sm"><span class="text-danger font-weight-bolder">-2% </span>than yesterday</p>
-                </div>
               </div>
             </div>
-            <div class="col-xl-3 col-sm-6">
+            <div class="col-xl-4 col-sm-6 mb-5">
               <div class="card">
                 <div class="card-header p-2 ps-3">
                   <div class="d-flex justify-content-between">
@@ -92,75 +128,25 @@ const Admin = () => {
                   </div>
                 </div>
                 <div class="horizontal-line"></div>
-                <div class="card-footer p-2 ps-3">
-                  <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+5% </span>than yesterday</p>
-                </div>
               </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-lg-4 col-md-6 mt-4 mb-4">
-              <div class="card">
-                <div class="card-body">
-                  <h6 class="mb-0 ">Website Views</h6>
-                  <p class="text-sm ">Last Campaign Performance</p>
-                  <div class="pe-2">
-                    <div class="chart">
-                      <img src="Chart.jpg" alt="" />
-                    </div>
-                  </div>
-                  <div class="horizontal-line"></div>
-                  <div class="d-flex ">
-                    <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
-                    <p class="mb-0 text-sm"> campaign sent 2 days ago </p>
-                  </div>
+          <div className="row">
+            <main className="content">
+              <div className="container-fluid p-0">
+                <div className="mb-3">
+                  <h1 className="h3 d-inline align-middle">Biểu đồ doanh thu</h1>
                 </div>
+
+                {/* Hiển thị biểu đồ */}
+                <RevenueCharts />
               </div>
-            </div>
-            <div class="col-lg-4 col-md-6 mt-4 mb-4">
-              <div class="card ">
-                <div class="card-body">
-                  <h6 class="mb-0 "> Daily Sales </h6>
-                  <p class="text-sm "> (<span class="font-weight-bolder">+15%</span>) increase in today sales. </p>
-                  <div class="pe-2">
-                    <div class="chart">
-                      <img src="Chart1.jpg" alt="" />
-                    </div>
-                  </div>
-                  <div class="horizontal-line"></div>
-                  <div class="d-flex ">
-                    <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
-                    <p class="mb-0 text-sm"> updated 4 min ago </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-4 mt-4 mb-3">
-              <div class="card">
-                <div class="card-body">
-                  <h6 class="mb-0 ">Completed Tasks</h6>
-                  <p class="text-sm ">Last Campaign Performance</p>
-                  <div class="pe-2">
-                    <div class="chart">
-                      <img src="Chart2.png" alt="" />
-                    </div>
-                  </div>
-                  <div class="horizontal-line"></div>
-                  <div class="d-flex ">
-                    <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
-                    <p class="mb-0 text-sm">just updated</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            </main>
           </div>
         </div>
 
         <div class="container-fluid">
           <div >
-            © made with <i class="fa fa-heart"></i> by
-            <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative Tim</a>
-            for a better web.
           </div>
         </div>
 

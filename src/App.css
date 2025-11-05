@@ -3,9 +3,9 @@
 }
 
 body {
-  background-color: #f5f5f5;
+  background-color: rgb(245 247 251);
   color: #333;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Playfair Display', serif;
   margin: 0;
   padding: 0;
   line-height: 1.6;
@@ -103,8 +103,7 @@ button:hover {
 table {
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid #545252
-    /* Gộp các border lại với nhau */
+  /* Gộp các border lại với nhau */
 }
 
 .tablee {
@@ -113,16 +112,21 @@ table {
 
 th,
 td {
-  border: 1px solid #545252 !important;
-  padding: 2px 0px;
-  text-align: center !important;
-  vertical-align: middle !important; 
+  padding: 1px 0px;
+  border-bottom: 1px solid #e8ecef !important;
+  /* thêm solid */
+  vertical-align: middle !important;
+}
+
+.tablee table tr:nth-child(odd) {
+  background-color: #e9ecef;
+  /* màu cho hàng lẻ */
 }
 
 th {
   background-color: #f2f2f2;
   text-align: center;
-  vertical-align: middle; 
+  vertical-align: middle;
 }
 
 .load-more-container {
@@ -247,49 +251,77 @@ section ul a {
 
 }
 
-/* -----------------footer---------------- */
+/* ----------------- Footer ---------------- */
 .footerr {
-  border-top: 1px solid #000;
-}
-
-.ft-logo {
-  display: flex;
-  justify-content: center;
-  font-size: 20px;
-  padding: 30px 0;
+  border-top: 1px solid #ddd;
+  background-color: #f9f9f9;
+  padding: 30px 0 10px;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
 }
 
 .ft-logo a {
   text-decoration: none;
-  color: #000;
+  color: #222;
+  font-size: 22px;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.ft-logo a:hover {
+  color: #007bff;
 }
 
 .ft-title {
-  display: flex;
-  justify-content: center;
-  font-weight: bold;
-  padding-bottom: 30px;
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  color: #333;
 }
 
 .ft-desc {
   display: flex;
-  justify-content: space-between;
-  max-width: 700px;
-  margin: 0 auto;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
   font-size: 14px;
+  color: #555;
+  margin-bottom: 25px;
+}
+
+.ft-desc a {
+  text-decoration: none;
+  color: #555;
+  transition: color 0.3s ease;
+}
+
+.ft-desc a:hover {
+  color: #007bff;
 }
 
 .ft-socical ul {
   display: flex;
   justify-content: center;
-}
-
-.ft-socical ul li {
-  padding: 20px 20px;
+  gap: 20px;
+  padding: 0;
+  list-style: none;
 }
 
 .ft-socical ul li a {
-  color: #000;
+  color: #555;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+.ft-socical ul li a:hover {
+  color: #007bff;
+}
+
+.footer-bottom {
+  font-size: 13px;
+  color: #777;
+  margin-top: 20px;
 }
 
 /* ----------------last-slider--------------- */
@@ -506,10 +538,18 @@ li {
 .product-buy-1-content-product-item {
   display: flex;
   flex-direction: column;
-  padding: 50px 12px 12px;
+  padding: 60px 12px 12px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease-in-out;
   cursor: pointer;
+  position: relative;
+}
+
+.select-product {
+  position: absolute;
+  top: 10px;
+  right: 2px;
+  z-index: 10;
 }
 
 .product-buy-1-content-product-item:hover {
@@ -649,7 +689,6 @@ li {
 }
 
 .Item-img {
-  width: 60%;
   background-color: #f0e9e9;
 }
 
@@ -664,13 +703,16 @@ li {
 }
 
 .Item-content-button-add {
-  width: 170px;
+  width: 300px;
+}
+
+.Item-content-button-addd {
+  width: 150px;
 }
 
 .Item-content-description-header {
   padding-top: 20px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #bfb8b8;
 }
 
 .Item-content-description-header p {
@@ -712,11 +754,20 @@ li {
   border-bottom: 1px solid #edeae7;
 }
 
-/* ---------------------login-page-------------------------- */
-.login {
-  height: 130vh !important;
+.chia_se {
+  display: flex;
+  justify-content: left;
+
+}
+.chia_se p {
+  margin:20px 0px 0px 10px;
+}
+.chia_se img {
+  margin:20px 0px 5px 10px;
+  cursor:pointer;
 }
 
+/* ---------------------login-page-------------------------- */
 .Login-page {
   display: block;
 }
@@ -993,7 +1044,7 @@ article {
   min-height: 100vh;
   position: relative;
   padding: 20px;
-  background-color: #cbc5c5;
+  background-color: rgb(245 247 251);
 }
 
 /* --------------------------------------CartBill----------------------------------------- */
@@ -1465,14 +1516,204 @@ nav ul.navigation li a.active {
 }
 
 .status-returned {
-    color: red; /* Màu đỏ cho trạng thái RETURNED */
-    font-weight: bold;
+  color: red;
+  /* Màu đỏ cho trạng thái RETURNED */
+  font-weight: bold;
 }
+
 .status-completed {
-    color: rgb(87, 128, 0); /* Màu xanh cho trạng thái COMPLETED */
-    font-weight: bold;
+  color: rgb(87, 128, 0);
+  /* Màu xanh cho trạng thái COMPLETED */
+  font-weight: bold;
 }
+
 .status-canceled {
-    color: gray; /* Màu xám cho trạng thái CANCELED */
-    font-weight: bold;
+  color: gray;
+  /* Màu xám cho trạng thái CANCELED */
+  font-weight: bold;
+}
+
+/*======================================left aside =============================================*/
+
+/* CSS cho bộ lọc màu sắc (Color Swatch) */
+.color-swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  transition: transform 0.1s, border-color 0.2s;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.color-swatch.selected {
+  border: 3px solid #9c9393;
+}
+
+/* Ký hiệu check mark bên trong swatch */
+.check-mark {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-shadow: 0 0 3px #000;
+}
+
+/* Thiết lập bố cục chính cho trang Sản phẩm */
+.product-page-layout {
+  display: flex;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+/* Thanh bên (Aside) - Left Filter */
+.filter-sidebar {
+  width: 250px;
+  padding: 15px;
+  border-right: 1px solid #eee;
+}
+
+.sidebar-heading {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #0d0d0d;
+}
+
+/* Danh sách danh mục */
+.category-list {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.filter-btn {
+  text-align: left;
+  /* Căn lề trái cho nút */
+  background: none;
+  border: none;
+  padding: 8px 0;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #555;
+  transition: color 0.2s;
+}
+
+.filter-btn:hover {
+  color: #5b5858;
+  font-weight: bold;
+  background-color: #ffffff;
+}
+
+.filter-btn.active {
+  color: #007bff;
+  font-weight: bold;
+}
+
+/* Phần hiển thị sản phẩm chính (Main) */
+.product-main-content {
+  flex-grow: 1;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background: #ccc;
+  margin: 20px 0;
+}
+
+/* Điều chỉnh select box */
+.filter-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Thiết lập bố cục chính cho trang Sản phẩm */
+.product-page-layout {
+  display: flex;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+/* Danh sách danh mục */
+.gender-filter {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+/* Thanh bên (Aside) - Sticky Filter */
+.filter-sidebar {
+  width: 250px;
+  padding: 15px;
+  border-right: 1px solid #eee;
+  background-color: #f0f4f9;
+
+  /* === CỐ ĐỊNH ASIDE === */
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
+  height: fit-content;
+}
+
+/* --- CSS Lọc Giá Input --- */
+.price-input-filter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.price-input {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: right;
+}
+
+.price-divider {
+  font-weight: bold;
+  color: #888;
+}
+
+/* --- CSS Lọc Màu (Color Swatch) --- */
+.color-swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  transition: transform 0.1s, border-color 0.2s;
+}
+
+.color-swatch.selected {
+  border: 3px solid #000;
+}
+
+.check-mark {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-shadow: 0 0 3px #000;
+}
+
+/* Phần hiển thị sản phẩm chính (Main) */
+.product-main-content {
+  flex-grow: 1;
 }

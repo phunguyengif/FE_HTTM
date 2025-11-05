@@ -7,11 +7,21 @@ const ProductSale = ({ imageUrl, name, price, onClick }) => {
   };
   return (
     <div className="slider-product-1-content-item" onClick={onClick}>
-      <img src={`http://localhost:8080/${imageUrl}`} alt={name} />
-      <div className="slider-product-1-content-items-text">
-        <li>{name}</li>
-        <li>{formatPrice(price)} VND</li>
-      </div>
+      <img
+        src={
+          imageUrl
+            ? imageUrl.split(";")[0].startsWith("http")
+              ? imageUrl.split(";")[0]
+              : `http://localhost:8080/${imageUrl.split(";")[0]}`
+            : ""
+        }
+        alt={name}
+        width="50"
+      />
+        <div className="slider-product-1-content-items-text">
+          <li>{name}</li>
+          <li>{formatPrice(price)} VND</li>
+        </div>
     </div>
   );
 };

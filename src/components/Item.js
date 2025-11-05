@@ -8,6 +8,8 @@ const ProductDetail = () => {
     const { id } = useParams();
     const productId = id;
     const [product, setProduct] = useState(null);
+    const [selectedColor, setSelectedColor] = useState("");
+    const [selectedSize, setSelectedSize] = useState("");
     const [quantity, setQuantity] = useState(1);
     const [totalPrice, setTotalPrice] = useState(0);
     const quantityInputRef = useRef(null);
@@ -16,8 +18,14 @@ const ProductDetail = () => {
     const [comment, setComment] = useState("");// trạng thái lưu comment
     const [reviews, setReviews] = useState([]); // Thêm trạng thái lưu nhận xét
 
+    // --- Xử lý gallery ảnh ---
+    const [mainImage, setMainImage] = useState("");
+    const [imageUrls, setImageUrls] = useState([]);
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const isReadyToBuy = selectedColor && selectedSize;
 
 
     const formatPrice = (price) => {
@@ -46,6 +54,11 @@ const ProductDetail = () => {
             const storedQuantity = localStorage.getItem(`quantity_${id}`) || 1;
             setQuantity(parseInt(storedQuantity));
             setTotalPrice(parseInt(data.price * quantity));
+
+            const imgs = data.imageUrl ? data.imageUrl.split(";") : [];
+            setImageUrls(imgs);
+            if (imgs.length > 0) setMainImage(imgs[0]);
+
         } catch (err) {
             setError(err);
         } finally {
@@ -68,6 +81,20 @@ const ProductDetail = () => {
 
     const handleIncrease = () => {
         setQuantity(quantity + 1);
+    };
+    // Hàm hiển thị sao theo rating
+    const renderStars = (rating) => {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+        return (
+            <span>
+                {'★'.repeat(fullStars)}
+                {hasHalfStar && '☆'}
+                {'☆'.repeat(emptyStars)}
+            </span>
+        );
     };
 
     //Tải danh sách nhân xét
@@ -113,18 +140,14 @@ const ProductDetail = () => {
         }
     };
 
-    console.log("Product:", product);
-    console.log("Quantity:", quantity);
-    console.log("Updated Total Price:", product?.price * quantity);
-
     const handlePlace = async () => {
         const token = localStorage.getItem('token');
-    
+
         if (!token) {
             alert("Bạn cần đăng nhập để thực hiện đặt hàng!");
             return;
         }
-    
+
         try {
             // 1. Thêm sản phẩm vào giỏ hàng
             const addToCartRes = await fetch('http://localhost:8080/api/cart/add', {
@@ -138,30 +161,30 @@ const ProductDetail = () => {
                     quantity: quantity,
                 }),
             });
-    
+
             if (!addToCartRes.ok) {
                 const errorData = await addToCartRes.json();
                 throw new Error(errorData.message || "Không thể thêm sản phẩm vào giỏ hàng.");
             }
-    
+
             // 2. Lấy toàn bộ giỏ hàng để lấy cartItem theo product ID
             const cartRes = await fetch('http://localhost:8080/api/cart', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
+
             const cartData = await cartRes.json();
-    
+
             const selectedItem = cartData.cart.find(item => item.product.id.toString() === id);
-    
+
             if (!selectedItem) {
                 throw new Error("Không tìm thấy sản phẩm vừa thêm trong giỏ hàng.");
             }
-    
+
             // 3. Tính tổng tiền
             const total = selectedItem.product.price * selectedItem.quantity;
-    
+
             // 4. Điều hướng đến CartBill
             navigate("/CartBill", {
                 state: {
@@ -169,48 +192,13 @@ const ProductDetail = () => {
                     totalprice: total,
                 },
             });
-    
+
         } catch (err) {
             console.error("Lỗi khi xử lý đặt hàng:", err);
             alert(err.message || "Có lỗi xảy ra. Vui lòng thử lại.");
         }
     };
-    
 
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError("");
-
-        if (rating < 1 || rating > 5) {
-            setError("Rating must be between 1 and 5.");
-            return;
-        }
-
-        try {
-            const response = await axios.post(
-                "http://localhost:8080/api/reviews/add",
-                {
-                    productId,
-                    rating,
-                    comment,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                }
-            );
-
-            setRating(0);
-            setComment("");
-            fetchReviews();
-        } catch (error) {
-            setError(
-                error.response?.data?.message || "An error occurred. Please try again."
-            );
-        }
-    };
 
     if (loading) {
         return <p>Đang tải thông tin sản phẩm...</p>;
@@ -229,17 +217,121 @@ const ProductDetail = () => {
             <div className="containerr">
                 <div className="Item-pages">
                     <div className="Item-pages-Img">
-                        <div className="Item-img">
-                            <img src={`http://localhost:8080/${product.imageUrl}`} alt={product.name} />
+                        <div className="Item-pages-Img text-center">
+                            {/* Ảnh lớn */}
+                            <div className="Item-img mb-3">
+                                <img
+                                    src={mainImage}
+                                    alt="Ảnh sản phẩm"
+                                    className="img-fluid rounded shadow-sm"
+                                    style={{
+                                        width: "100%",
+                                        maxWidth: "400px",
+                                        height: "auto",
+                                        objectFit: "contain",
+                                        transition: "transform 0.3s ease",
+                                    }}
+                                />
+                            </div>
+
+                            {/* Ảnh nhỏ bên dưới */}
+                            <div className="d-flex justify-content-center gap-2 flex-wrap">
+                                {imageUrls.map((url, index) => (
+                                    <img
+                                        key={index}
+                                        src={url}
+                                        alt={`thumb-${index}`}
+                                        onClick={() => setMainImage(url)}
+                                        className={`rounded border ${mainImage === url ? "border-3 border-primary" : "border-1 border-secondary"
+                                            }`}
+                                        style={{
+                                            width: "70px",
+                                            height: "70px",
+                                            objectFit: "cover",
+                                            cursor: "pointer",
+                                            transition: "all 0.2s ease-in-out",
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                            <div className='chia_se' >
+                                <p>Chia sẻ:</p>
+                                <img src='/Image/facebook.png' />
+                                <img src='/Image/messenger.png' />
+                                <img src='/Image/pinterest.png' />
+                                <img src='/Image/twitter.png' />
+                            </div>
                         </div>
                     </div>
                     <div className="Item-content">
                         <div className="Item-content-text">
                             <h4>{product.name}</h4>
-                            <p>{reviews.length} đánh giá</p>
-                            <p>Giá: {formatPrice(product.price)} VND</p>
+                            {/* Phần đánh giá */}
+                            <p className="text-muted mb-2">
+                                {reviews.length > 0 ? (
+                                    <span>{reviews.length} đánh giá</span>
+                                ) : (
+                                    <span className="fst-italic text-secondary">Chưa có đánh giá</span>
+                                )}
+                            </p>
+
+                            {/* Giá sản phẩm */}
+                            <p
+                                className="fw-bold mb-3"
+                                style={{ fontSize: "1.6rem", color: "#ff6600", backgroundColor: "#fafafa" }}
+                            >
+                                {product.price.toLocaleString()}
+                                <sup
+                                    style={{
+                                        fontSize: "0.9rem",
+                                        top: "-0.6em",
+                                        position: "relative",
+                                        marginLeft: "2px",
+                                    }}
+                                >
+                                    ₫
+                                </sup>
+                            </p>
                         </div>
-                        <div className="Item-content-button-add">
+                        {/* ✅ Thêm phần chọn màu sắc */}
+                        <div className="mb-3">
+                            <label className="fw-semibold">Màu sắc:</label>
+                            <div>
+                                {["Đen", "Trắng", "Xanh", "Đỏ"].map((color) => (
+                                    <div className="form-check form-check-inline" key={color}>
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="color"
+                                            id={`color-${color}`}
+                                            value={color}
+                                            onChange={(e) => setSelectedColor(e.target.value)}
+                                        />
+                                        <label className="form-check-label" htmlFor={`color-${color}`}>
+                                            {color}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* ✅ Thêm phần chọn size */}
+                        <div className="mb-3">
+                            <label htmlFor="sizeSelect" className="fw-semibold">Kích cỡ:</label>
+                            <select
+                                id="sizeSelect"
+                                className="form-select w-auto"
+                                value={selectedSize}
+                                onChange={(e) => setSelectedSize(e.target.value)}
+                            >
+                                <option value="">-- Chọn size --</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                            </select>
+                        </div>
+                        <div className='Item-content-button-addd'>
                             <div className="input-group">
                                 <button className="btn btn-outline-secondary" type="button" onClick={handleDecrease}>-</button>
                                 <input
@@ -252,13 +344,32 @@ const ProductDetail = () => {
                                 />
                                 <button className="btn btn-outline-secondary" type="button" onClick={handleIncrease}>+</button>
                             </div>
-                            <div className="mt-2">
-                                <button className="btn btn-outline-primary" onClick={handleAddToCart}>Thêm vào giỏ hàng</button>
-                            </div>
-                            <div className="mt-2">
-                                <button className="btn btn-outline-primary" onClick={handlePlace}>Đặt hàng</button>
+                        </div>
+
+                        <div className="Item-content-button-add">
+
+                            <div className="mt-3 d-flex gap-2">
+                                <button
+                                    className="btn btn-outline-primary flex-fill"
+                                    onClick={() => handleAddToCart({ ...product, quantity, selectedColor, selectedSize })}
+                                    disabled={!isReadyToBuy}
+                                >
+                                    <i className="bi bi-cart-plus me-1"></i> Thêm vào giỏ hàng
+                                </button>
+
+                                <button
+                                    className="btn btn-primary flex-fill"
+                                    onClick={() => handlePlace({ ...product, quantity, selectedColor, selectedSize })}
+                                    disabled={!isReadyToBuy}
+                                >
+                                    <i className="bi bi-bag-check me-1"></i> Đặt hàng
+                                </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div className='Review-pages'>
+                    <div className='Review-pages-container'>
                         <div className="Item-content-description">
                             <div className="Item-content-description-header">
                                 <p>MÔ TẢ SẢN PHẨM</p>
@@ -269,52 +380,10 @@ const ProductDetail = () => {
                         </div>
                     </div>
                 </div>
-
                 <div className="Review-pages">
                     <div className="Review-pages-container">
                         <div className="Review-header">
                             <p style={{ fontSize: "15px" }}>ĐÁNH GIÁ SẢN PHẨM</p>
-                        </div>
-                        <div className="Review-rating-pages">
-                            <div className="Review-rating">
-                                <form onSubmit={handleSubmit}>
-                                    <div>
-                                        <label htmlFor="rating" className="block text-sm font-medium mb-2">
-                                            Rating (1-5):
-                                        </label>
-                                        <input
-                                            type="number"
-                                            id="rating"
-                                            value={rating}
-                                            onChange={(e) => setRating(e.target.value)}
-                                            min="1"
-                                            max="5"
-                                            required
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label htmlFor="comment" className="block text-sm font-medium mb-2">
-                                            Nhận xét:
-                                        </label>
-                                        <textarea
-                                            id="comment"
-                                            value={comment}
-                                            onChange={(e) => setComment(e.target.value)}
-                                            rows="3"
-                                            style={{ width: "920px" }}
-                                            required
-                                        />
-                                    </div>
-
-                                    <button
-                                        type="submit"
-                                        className="bg-blue-500 "
-                                    >
-                                        Gửi
-                                    </button>
-                                </form>
-                            </div>
                         </div>
                         <div className="Review-content-pages">
                             {/* dùng để show tất cả nhận xét */}
@@ -322,11 +391,16 @@ const ProductDetail = () => {
                                 {reviews.length > 0 ? (
                                     reviews.map((review) => (
                                         <div key={review.id} className="review-item">
-                                            <p><strong>{review.userFullName}</strong></p>
-                                            <p className="text-sm text-gray-500">
+                                            <p><strong>{review.userFullName}</strong> <span style={{ marginLeft: "8px", color: "#999", fontSize: "0.9rem" }}>
                                                 {new Date(review.createdAt).toLocaleDateString()}
+                                            </span></p>
+
+                                            <p>
+                                                {renderStars(review.rating)}
+                                                <span style={{ marginLeft: "8px", color: "#999", fontSize: "0.9rem" }}>
+                                                    ({review.rating}/5)
+                                                </span>
                                             </p>
-                                            <p>Rating : {review.rating}/5</p>
                                             <p>{review.comment}</p>
                                         </div>
                                     ))
@@ -340,7 +414,7 @@ const ProductDetail = () => {
                     </div>
                 </div>
             </div>
-        </section>
+        </section >
     );
 };
 
