@@ -54,10 +54,7 @@ Dự án được xây dựng theo kiến trúc Client-Server:
 ### 2. Frontend (ReactJS)
 
 1.  Di chuyển vào thư mục frontend (từ thư mục gốc của dự án):
-    ```bash
 cd [FE_YourEyes]
-    ```
-    *(Ví dụ: `cd frontend` hoặc `cd client`)*
 2.  Cài đặt các thư viện cần thiết:
     ```bash
     npm install

@@ -1,12 +1,18 @@
 import React from 'react';
 
-const ProductItem = ({ imageUrl, name, price, onClick }) => {
+const ProductItem = ({ imageUrl, name, price, isOutOfStock, onClick }) => {
   const formatPrice = (price) => {
     if (typeof price !== 'number') return '';
     return price.toLocaleString('vi-VN');
   };
+  const itemClassName = `product-buy-1-content-product-item ${isOutOfStock ? 'out-of-stock' : ''}`;
   return (
     <div className="product-buy-1-content-product-item" onClick={onClick}>
+      {isOutOfStock && (
+        <div className="stock-overlay">
+          <span>Hết hàng</span>
+        </div>
+      )}
       <img
         src={
           imageUrl

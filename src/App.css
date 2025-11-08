@@ -480,7 +480,7 @@ li {
 }
 
 .slider-product-1-content {
-  background-color: #fea200;
+  background-color: #cac7c2;
   padding: 12px;
 }
 
@@ -523,7 +523,37 @@ li {
   font-size: 1.05em;
   transition: all 0.2s ease-in-out;
 }
+/*=======================Recommend================*/
+.slider-product-1-content-itemss {
+    display: flex;
+    flex-wrap: nowrap;      
+    overflow-x: auto;       
+    gap: 16px;              
+    
+    scrollbar-width: none;  
+    -ms-overflow-style: none; 
+}
 
+.slider-product-1-content-itemss::-webkit-scrollbar {
+    display: none;
+}
+
+
+.slider-product-1-content-items {
+    flex-basis: 24%;      
+    flex-shrink: 0;       
+    background-color: #fff;
+    padding: 50px 12px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+
+@media (max-width: 768px) {
+    .slider-product-1-content-item {
+        flex-basis: 80%; 
+    }
+}
 /* --------------product-buy---------------- */
 .product-buy-1 {
   margin-bottom: 40px;
@@ -1716,4 +1746,47 @@ nav ul.navigation li a.active {
 /* Phần hiển thị sản phẩm chính (Main) */
 .product-main-content {
   flex-grow: 1;
+}
+
+/*====================het hang========= */
+/* Bọc item sản phẩm */
+.product-item-wrapper {
+    position: relative; 
+    cursor: pointer;
+}
+
+/* Class được thêm khi hết hàng */
+.product-item-wrapper.out-of-stock {
+    opacity: 0.6; 
+    cursor: not-allowed; 
+}
+
+/* Lớp phủ "Hết hàng" */
+.stock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    border-radius: 8px; 
+}
+
+.stock-overlay span {
+    color: rgb(185, 106, 106);
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+}
+
+/* Vô hiệu hóa nút bên trong (nếu có) */
+.product-item-wrapper.out-of-stock .btn-add-to-cart {
+    background-color: #ccc;
+    border-color: #ccc;
+    cursor: not-allowed;
 }

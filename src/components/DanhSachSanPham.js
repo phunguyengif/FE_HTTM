@@ -26,6 +26,7 @@ const ProductList = ({ products }) => {
                 price={product.price}
                 date={product.createdAt}
                 categoryName={product.categoryId?.name || 'Không có danh mục'}
+                isOutOfStock={product.stock === 0}
                 onClick={() => handleProductClick(product.id)}
               />
             ))}
